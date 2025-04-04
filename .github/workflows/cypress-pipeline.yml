@@ -1,8 +1,5 @@
 on:
-  push:
-    branches: [main]  # Publica no GitHub Pages apenas para push na main
-  pull_request:
-    branches: [main]  # Apenas roda os testes e salva o relatório como artefato
+  push:  # Roda os testes quando houver Push para qualquer branch, mas só publica o relatório se houver Push para main
   workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
@@ -25,6 +22,15 @@ jobs:
           name: relatorio-testes
           path: cypress/reports/html
 
+  deploy:
+    needs: cypress-run
+    if: github.ref == 'refs/heads/main'  # Só publica no GitHub Pages se for push na main
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
       - name: Criar estrutura para o GitHub Pages
         run: |
           mkdir -p docs
@@ -39,13 +45,5 @@ jobs:
         with:
           path: docs
 
-  deploy:
-    needs: cypress-run
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-
-    steps:
       - name: Publicar no GitHub Pages
         uses: actions/deploy-pages@v2
