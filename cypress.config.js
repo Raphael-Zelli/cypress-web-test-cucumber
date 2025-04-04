@@ -9,6 +9,10 @@ module.exports = defineConfig({
   projectId: '32mjfd',
   reporter: 'cypress-mochawesome-reporter',
   reporterOptions: {
+    reportDir: "cypress/reports",  //Os relatórios serão salvos aqui
+    overwrite: false,
+    html: true,
+    json: true,
     charts: true,
     reportTitle: 'Relatório Testes Automatizados',
     reportPageTitle: 'Relatório Testes Automatizados',

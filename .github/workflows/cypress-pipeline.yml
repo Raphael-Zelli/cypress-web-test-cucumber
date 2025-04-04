@@ -1,0 +1,46 @@
+name: Run All Tests
+
+on:
+  pull_request: 
+    branches: [main]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout/Clone do projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências do projeto
+        run: npm install
+
+      - name: Rodar Testes
+        uses: cypress-io/github-action@v6
+
+      - name: Criar estrutura para o GitHub Pages
+        run: |
+          mkdir -p docs
+          cp -r cypress/reports docs/
+          echo '<meta http-equiv="refresh" content="0; url=cypress/reports/mochawesome.html">' > docs/index.html
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Fazer upload do relatório para GitHub Pages
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: docs
+
+  deploy:
+    needs: cypress-run
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Publicar no GitHub Pages
+        uses: actions/deploy-pages@v2
+        
+        
