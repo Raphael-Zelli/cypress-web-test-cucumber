@@ -1,7 +1,6 @@
 on:
   pull_request: 
     branches: [main]
-  push:  # Roda os testes quando houver Push para qualquer branch, mas só publica o relatório se houver Push para main
   workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
