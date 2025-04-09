@@ -1,8 +1,6 @@
-name: Run All Tests
-
 on:
-  pull_request: 
-    branches: [main]
+  push:  # Roda os testes quando houver Push para qualquer branch, mas só publica o relatório se houver Push para main
+  workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
   cypress-run:
@@ -17,11 +15,26 @@ jobs:
 
       - name: Rodar Testes
         uses: cypress-io/github-action@v6
+      
+      - name: Salvar relatório como artefato no Github Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-testes
+          path: cypress/reports/html
 
+  deploy:
+    needs: cypress-run
+    if: github.ref == 'refs/heads/main'  # Só publica no GitHub Pages se for push na main
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
       - name: Criar estrutura para o GitHub Pages
         run: |
           mkdir -p docs
-          cp -r cypress/reports docs/
+          cp -r cypress/reports/html docs/
           echo '<meta http-equiv="refresh" content="0; url=cypress/reports/mochawesome.html">' > docs/index.html
 
       - name: Configurar GitHub Pages
@@ -32,15 +45,5 @@ jobs:
         with:
           path: docs
 
-  deploy:
-    needs: cypress-run
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-
-    steps:
       - name: Publicar no GitHub Pages
         uses: actions/deploy-pages@v2
-        
-        
