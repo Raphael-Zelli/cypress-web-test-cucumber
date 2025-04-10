@@ -1,7 +1,6 @@
 on:
   pull_request: 
     branches: [main]
-  push:  # Roda os testes quando houver Push para qualquer branch, mas só publica o relatório se houver Push para main
   workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
@@ -17,11 +16,14 @@ jobs:
 
       - name: Rodar Testes
         uses: cypress-io/github-action@v6
+        with: 
+          record: true
       
       - name: Salvar relatório como artefato no Github Actions
         uses: actions/upload-artifact@v4
         with:
           name: relatorio-testes
-          path: cypress\reports\html
+          path: cypress/reports/html
+
 
  
