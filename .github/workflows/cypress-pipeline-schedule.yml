@@ -17,6 +17,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with: 
           record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY}}
       
       - name: Salvar relatório como artefato no Github Actions
         uses: actions/upload-artifact@v4
